@@ -61,7 +61,24 @@ def predict_img(path):
         print("Confidence:", max(proba2))
 
 
+#
+# path_test = "dataset/imgs/test"
+#
+# predict_img(path_test)
 
-path_test = "dataset/imgs/test"
 
-predict_img(path_test)
+def RealTimeProcess(img, model):
+
+    transform = transforms.Compose([transforms.Resize((400, 400)),
+                                    transforms.RandomRotation(10),
+                                    transforms.ToTensor(),
+                                    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+
+    img = transform(img)
+    img = img.unsqueeze(0)
+    output = model(img.cuda())
+    proba = nn.Softmax(dim=1)(output)
+    proba = [round(float(elem), 4) for elem in proba[0]]
+    return proba
+
+
